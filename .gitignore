@@ -1,0 +1,43 @@
+# 의존성
+node_modules/
+
+# 빌드 산출물
+dist/
+dist-ssr/
+*.tsbuildinfo
+backend/src/generated/
+
+# 환경변수 (실제 키/비밀번호 포함 — 커밋 금지)
+.env
+.env.*
+!.env.example
+
+# 테스트/커버리지
+coverage/
+
+# 로그
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 에디터/OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.local
+
+# Claude Code 로컬 전용 설정 (사람마다 다름, 공유 금지)
+.claude/settings.local.json
+
+# 회사가 과제용으로 개별 제공한 명세 파일 (Public 저장소에 올리지 않음)
+swagger.yaml
+TODO.md
+INTERVIEW_PREP.md
+AI_LOG.md
+DECISIONS.md
+MEASUREMENTS.md
+REFLECTION.md

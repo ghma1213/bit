@@ -1,0 +1,72 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+model Employee {
+  id             String           @id @default(uuid())
+  // 사번: HR 업무 키. 동명이인이 있을 수 있어 이름으로는 직원을 식별할 수 없다.
+  employeeNumber String           @unique @map("employee_number")
+  // 연락용 선택 필드 (로그인 ID 는 사번). unique 는 NULL 을 여러 개 허용한다.
+  email          String?          @unique
+  passwordHash   String           @map("password_hash")
+  name           String
+  role           Role             @default(EMPLOYEE)
+
+  // 인적사항
+  phone      String?
+  address    String?
+  birthDate  DateTime? @map("birth_date") @db.Date
+  department String?
+  position   String?
+
+  // true 면 비밀번호를 변경하기 전에는 다른 API 를 사용할 수 없다 (임시 비밀번호 발급 시)
+  mustChangePassword Boolean @default(false) @map("must_change_password")
+
+  // 로그인 무차별 대입 방어
+  failedLoginAttempts Int       @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime? @map("locked_until")
+
+  hiredAt      DateTime  @default(now()) @map("hired_at")
+  // 퇴사 효력 시각. 이 시각이 지나면 퇴사자다(재직 상태는 이 값으로만 판단한다, DECISIONS.md #1)
+  terminatedAt DateTime? @map("terminated_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("employees")
+}
+
+// connect-pg-simple 세션 저장소 (테이블 구조를 Prisma 마이그레이션으로 관리)
+model Session {
+  sid    String   @id @db.VarChar
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+  @@map("session")
+}
+
+// 관리자 행위 감사 로그. metadata 에 비밀번호/조회 결과 같은 민감 값을 넣지 않는다.
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String   @map("actor_id")
+  action    String
+  targetId  String?  @map("target_id")
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([actorId])
+  @@index([targetId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
