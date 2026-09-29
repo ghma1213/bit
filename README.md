@@ -63,8 +63,6 @@ npm run dev                 # http://localhost:5173
 
 ## 범위 — 넣은 것 / 뺀 것
 
-과제 안내에 "완성도보다 판단의 근거를 본다"는 기준이 있어서, 시간 배분을 어떻게 했는지 명시한다.
-
 **넣은 것**
 - 인증/세션: 사번 로그인, argon2, session fixation 방지, 퇴사자 즉시 차단(매 요청 DB 재검증), 로그인 시도 제한 + 계정 잠금(원자적 SQL), CSRF(SameSite+Origin 검증)
 - 접근 제어: 전역 `AuthGuard`/`RolesGuard`, IDOR 방지(`/api/me`는 ID 파라미터 없음)
